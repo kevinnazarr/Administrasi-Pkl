@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
 
+    ->withMiddleware(function ($middleware) {
+        $middleware->append(\App\Http\Middleware\CleanupTempSurat::class);
+    })
+
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })

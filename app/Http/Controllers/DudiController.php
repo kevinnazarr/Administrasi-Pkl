@@ -41,10 +41,11 @@ class DudiController extends Controller
         $data = $request->validate([
             'nama'            => 'required|string|max:255',
             'alamat'          => 'required|string',
+            'kecamatan'       => 'required|string|max:100',
             'pimpinan'        => 'nullable|string|max:255',
             'pembimbing_dudi' => 'required|string|max:255',
             'jabatan'         => 'nullable|string|max:255',
-            'daya_tampung'    => 'required|integer|min:0',
+            'daya_tampung'    => 'required|integer|min:1',
         ]);
 
         Dudi::create($data);
@@ -84,6 +85,7 @@ class DudiController extends Controller
         $data = $request->validate([
             'nama'            => 'required|string|max:255',
             'alamat'          => 'required|string',
+            'kecamatan'       => 'required|string|max:100',
             'pimpinan'        => 'nullable|string|max:255',
             'pembimbing_dudi' => 'required|string|max:255',
             'jabatan'         => 'nullable|string|max:255',

@@ -7,6 +7,8 @@ use App\Http\Controllers\{
     LoginController,
     JurusanController,
     PembimbingController,
+    OnlyOfficeController,
+    SuratController,
     DudiController
 };
 
@@ -21,7 +23,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Tambah siswa (semua role)
     Route::get('/siswa/create', [SiswaController::class, 'create'])
         ->name('siswa.create');
 
@@ -31,14 +32,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:super_admin,admin_jurusan'])->group(function () {
 
-    // SISWA
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('siswa.show');
     Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
     Route::put('/siswa/{siswa}', [SiswaController::class, 'update'])->name('siswa.update');
     Route::delete('/siswa/{siswa}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 
-    // PEMBIMBING
     Route::get('/pembimbing', [PembimbingController::class, 'index'])->name('pembimbing.index');
     Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('pembimbing.create');
     Route::post('/pembimbing', [PembimbingController::class, 'store'])->name('pembimbing.store');
@@ -61,4 +60,12 @@ Route::middleware(['auth', 'role:super_admin,admin_jurusan'])->group(function ()
 
 Route::middleware(['auth', 'role:super_admin,admin_jurusan'])->group(function () {
     Route::resource('dudi', DudiController::class);
+});
+
+Route::prefix('surat')->group(function () {
+    Route::get('/', [SuratController::class, 'index'])->name('surat.index');
+    Route::get('/penjajakan', [SuratController::class, 'penjajakan'])->name('surat.penjajakan');
+    Route::post('/penjajakan/preview', [SuratController::class, 'penjajakanPreview'])->name('surat.penjajakan.preview');
+    Route::get('/penjajakan/preview-page', [SuratController::class, 'previewPage'])->name('surat.penjajakan.preview.page');
+    Route::get('/penjajakan/download', [SuratController::class, 'download'])->name('surat.penjajakan.download');
 });

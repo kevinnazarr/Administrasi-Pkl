@@ -78,8 +78,6 @@
             background-color: white;
             padding: 0 8px;
         }
-
-        /* Role tabs styling */
         .role-tab {
             transition: all 0.2s ease;
         }
@@ -98,8 +96,6 @@
         .animate-spin {
             animation: spin 1s linear infinite;
         }
-
-        /* Background overlay */
         .bg-overlay::before {
             content: '';
             position: absolute;
@@ -110,8 +106,6 @@
             background-color: rgba(67, 97, 238, 0.85);
             z-index: 1;
         }
-
-        /* Background dengan gambar sekolah/teknologi */
         body {
             background-image: url('https://shorturl.at/emgCE');
             background-size: cover;
@@ -130,9 +124,7 @@
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 md:p-6 font-sans relative">
-    <!-- Background blur layer -->
     <div class="absolute inset-0 backdrop-blur-sm bg-black/20 z-0"></div>
-    <!-- Container utama -->
     <div class="w-full max-w-md animate-fade-in relative z-10">
         <div class="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.18)] ring-1 ring-black/5 overflow-hidden">
             <div class="gradient-primary p-6 md:p-8 text-center relative overflow-hidden">

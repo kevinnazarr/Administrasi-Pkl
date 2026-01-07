@@ -29,7 +29,6 @@ class LoginController extends Controller
 
         $loginInput = $request->login;
 
-        // Cari user: admin pakai username, siswa pakai NIS
         $user = User::where('username', $loginInput)
             ->orWhere('nis', $loginInput)
             ->first();
@@ -38,7 +37,6 @@ class LoginController extends Controller
             return back()->with('error', 'Akun tidak ditemukan.');
         }
 
-        // Tentukan kredensial berdasarkan role
         if ($user->role === 'siswa') {
             $credentials = [
                 'nis'      => $loginInput,
@@ -57,7 +55,6 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirect sesuai role
         if ($user->role === 'siswa') {
             return redirect()->route('siswa.create');
         }
@@ -67,11 +64,18 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        foreach (['surat_pdf', 'surat_docx'] as $key) {
+            if (session()->has($key)) {
+                $file = storage_path('app/public/tmp/' . session($key));
+                if (file_exists($file)) {
+                    @unlink($file);
+                }
+            }
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect('/login');
     }
 }

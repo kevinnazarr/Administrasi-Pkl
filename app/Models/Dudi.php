@@ -15,6 +15,7 @@ class Dudi extends Model
     protected $fillable = [
         'nama',
         'alamat',
+        'kecamatan',
         'pimpinan',
         'pembimbing_dudi',
         'jabatan',
@@ -26,7 +27,6 @@ class Dudi extends Model
         return $this->hasMany(Siswa::class, 'id_dudi', 'id_dudi');
     }
 
-    // RELASI YANG KURANG
     public function pembimbings()
     {
         return $this->belongsToMany(

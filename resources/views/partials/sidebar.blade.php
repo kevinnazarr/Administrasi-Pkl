@@ -4,7 +4,6 @@
 
 <div class="h-full flex flex-col">
 
-    <!-- Close button untuk mobile -->
     <div class="md:hidden p-4 border-b flex items-center justify-between bg-linear-to-r from-primary to-secondary text-white">
         <div class="flex items-center">
             <div class="w-60 h-20 rounded-lg overflow-hidden flex items-center justify-center bg-white p-1">
@@ -19,7 +18,6 @@
         </button>
     </div>
 
-    <!-- Logo Sekolah (Desktop) -->
     <div class="hidden md:block p-6 border-b">
         <div class="flex items-center">
             <div class="w-50 h-50 rounded-lg overflow-hidden flex items-center justify-center">
@@ -30,7 +28,6 @@
         </div>
     </div>
 
-    <!-- Profile Admin -->
     <div class="p-6 border-b">
         <div class="flex items-center cursor-pointer" id="profile-toggle">
             <div class="w-12 h-12 rounded-full bg-linear-to-r from-primary to-secondary flex items-center justify-center overflow-hidden border-2 border-white shadow">
@@ -51,16 +48,10 @@
                 id="profile-chevron"></i>
         </div>
 
-        <!-- Menu Profile -->
         <div class="mt-4 hidden animate-slide-down" id="profile-menu">
             <a href="{{ route('dashboard') }}"
                 class="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors profile-menu-item">
                 <i class="fas fa-user-circle mr-3 text-primary"></i> Profil Saya
-            </a>
-
-            <a href="{{ route('dashboard') }}"
-                class="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors profile-menu-item">
-                <i class="fas fa-cog mr-3 text-primary"></i> Pengaturan Akun
             </a>
 
             <form action="{{ route('logout') }}" method="POST">
@@ -73,7 +64,6 @@
         </div>
     </div>
 
-    <!-- Menu Navigasi -->
     <nav class="flex-1 p-4 overflow-y-auto">
         <ul class="space-y-2">
 
@@ -145,7 +135,7 @@
 
             @if ($role === 'admin_jurusan' || $role === 'super_admin')
             <li>
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('surat.index') }}"
                 class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors nav-menu-item"
                 data-menu="surat">
                     <i class="fas fa-file-contract text-yellow-500 mr-3"></i>
@@ -154,21 +144,9 @@
             </li>
             @endif
 
-            @if ($role === 'super_admin')
-            <li class="pt-6">
-                <a href="{{ route('dashboard') }}"
-                class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors nav-menu-item"
-                data-menu="pengaturan">
-                    <i class="fas fa-cog text-gray-500 mr-3"></i>
-                    <span>Pengaturan</span>
-                </a>
-            </li>
-            @endif
-
         </ul>
     </nav>
 
-    <!-- Footer -->
     <div class="p-4 border-t text-center text-gray-500 text-sm">
         <p>© 2025 SMK Negeri 1 Wonosobo</p>
         <p class="text-xs mt-1">Sistem PKL v1.0</p>
@@ -252,7 +230,7 @@
         });
 
         const savedActiveMenu = localStorage.getItem('activeMenu');
-        if (savedActiveMenu) {
+        if (savedActiveMenu && window.location.pathname !== '/dashboard' && window.location.pathname !== '/') {
             const savedMenuItem = document.querySelector(`.nav-menu-item[data-menu="${savedActiveMenu}"]`);
             if (savedMenuItem) {
                 document.querySelectorAll('.nav-menu-item').forEach(item => {
@@ -264,4 +242,12 @@
 
         window.addEventListener('popstate', setActiveMenu);
     });
+
+    const logoutForm = document.getElementById('logout-form');
+        if (logoutForm) {
+            logoutForm.addEventListener('submit', function () {
+                localStorage.removeItem('activeMenu');
+            });
+        }
+
 </script>

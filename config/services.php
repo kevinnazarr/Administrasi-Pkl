@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'onlyoffice' => [
+        'url' => env('ONLYOFFICE_URL'),
+        'secret' => env('ONLYOFFICE_JWT_SECRET'),
+    ],
+
+
 ];

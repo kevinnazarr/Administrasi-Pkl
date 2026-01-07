@@ -13,13 +13,12 @@ return new class extends Migration
 
             $table->string('nama');
             $table->text('alamat');
+            $table->string('kecamatan', 100)->nullable();
 
-            // pihak DUDI
             $table->string('pimpinan')->nullable();
             $table->string('pembimbing_dudi');
             $table->string('jabatan')->nullable();
 
-            // kapasitas
             $table->integer('daya_tampung')->default(0);
 
             $table->timestamps();

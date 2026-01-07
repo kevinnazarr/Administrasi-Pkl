@@ -4,13 +4,13 @@
 
 @section('content')
 
-</head>
     <div class="mb-6">
         <div class="greeting-card rounded-2xl shadow-lg p-6 md:p-8 bg-linear-to-r from-blue-500 to-blue-600 text-white">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                 <div>
                     <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
                         Dashboard PKL
                     </h1>
 
@@ -19,7 +19,7 @@
                         <span class="font-semibold text-white">
                             {{ auth()->user()->name }}
                         </span>
-                        Kelola data peserta PKL dengan mudah dan efisien.
+                        Kelola data peserta PKL dengan effisien.
                     </p>
                 </div>
 
@@ -40,9 +40,7 @@
     </div>
 
 
-    <!-- Statistik Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Card Siswa -->
         <div class="bg-white rounded-2xl shadow-md p-6 card-hover animate-slide-up h-full" style="animation-delay: 0.1s">
             <div class="flex justify-between items-start h-full">
                 <div class="flex flex-col justify-center">
@@ -59,7 +57,6 @@
             </div>
         </div>
 
-        <!-- Card Pembimbing -->
         <div class="bg-white rounded-2xl shadow-md p-6 card-hover animate-slide-up h-full" style="animation-delay: 0.2s">
             <div class="flex justify-between items-start h-full">
                 <div class="flex flex-col justify-center">
@@ -76,7 +73,6 @@
             </div>
         </div>
 
-        <!-- Card Perusahaan -->
         <div class="bg-white rounded-2xl shadow-md p-6 card-hover animate-slide-up h-full" style="animation-delay: 0.3s">
             <div class="flex justify-between items-start h-full">
                 <div class="flex flex-col justify-center">
@@ -95,73 +91,65 @@
     </div>
 
 
-                    <!-- Siswa Terbaru dan Perusahaan Mitra -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                        <!-- Siswa Terbaru -->
-                            <div class="bg-white rounded-2xl shadow-md p-6 animate-fade-in">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h2 class="text-xl font-bold text-dark">Siswa Terbaru</h2>
-                                    <a {{ route('dashboard') }} class="text-primary font-medium hover:text-secondary transition-colors duration-200 flex items-center">
-                                        Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
-                                    </a>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-md p-6 animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-dark">Siswa Terbaru</h2>
+                <a {{ route('dashboard') }} class="text-primary font-medium hover:text-secondary transition-colors duration-200 flex items-center">
+                    Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+                <div class="space-y-4">
+                        @foreach($latestSiswa as $siswa)
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+                                <div>
+                                    <h3 class="font-semibold text-dark">{{ $siswa->nama }}</h3>
+                                        <p class="text-gray-600 text-sm">
+                                        Jurusan: {{ $siswa->jurusan->jurusan ?? '-' }}
+                                    </p>
+                                        <p class="text-gray-600 text-sm">
+                                        DUDI: {{ $siswa->dudi->nama ?? '-' }}
+                                    </p>
+                                        <p class="text-gray-600 text-sm">
+                                        Pembimbing: {{ $siswa->pembimbing->nama ?? '-' }}
+                                    </p>
+                                        <p class="text-gray-600 text-sm">                                            Kendaraan: {{ $siswa->kendaraan ?? '-' }}
+                                    </p>
                                 </div>
-                            <div class="space-y-4">
-                                    @foreach($latestSiswa as $siswa)
-                                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                                            <div>
-                                                <h3 class="font-semibold text-dark">{{ $siswa->nama }}</h3>
-                                                <p class="text-gray-600 text-sm">
-                                                    Jurusan: {{ $siswa->jurusan->jurusan ?? '-' }}
-                                                </p>
-                                                <p class="text-gray-600 text-sm">
-                                                    DUDI: {{ $siswa->dudi->nama ?? '-' }}
-                                                </p>
-                                                <p class="text-gray-600 text-sm">
-                                                    Pembimbing: {{ $siswa->pembimbing->nama ?? '-' }}
-                                                </p>
-                                                <p class="text-gray-600 text-sm">
-                                                    Kendaraan: {{ $siswa->kendaraan ?? '-' }}
-                                                </p>
-                                            </div>
-                                    </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Perusahaan Mitra -->
-                    <div class="bg-white rounded-2xl shadow-md p-6 animate-fade-in" style="animation-delay: 0.2s">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-xl font-bold text-dark">Dudi Terbaru</h2>
-                            <a {{ route('dashboard') }} class="text-primary font-medium hover:text-secondary transition-colors duration-200 flex items-center">
-                                Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
-                            </a>
-                        </div>
-                        <div class="space-y-4">
-                            @foreach($latestDudi as $dudi)
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-                                    <div>
-                                        <h3 class="font-semibold text-dark">{{ $dudi->nama }}</h3>
-                                        <p class="text-gray-600 text-sm">{{ $dudi->pimpinan }} - {{ $dudi->jabatan }}</p>
-                                    </div>
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                                        Kapasitas: {{ $dudi->daya_tampung }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+                            </div>
+                    @endforeach
                 </div>
+        </div>
 
-            <div class="w-full space-y-6 px-0">
-        <!-- Aksi Cepat -->
+        <div class="bg-white rounded-2xl shadow-md p-6 animate-fade-in" style="animation-delay: 0.2s">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-dark">Dudi Terbaru</h2>
+                <a {{ route('dashboard') }} class="text-primary font-medium hover:text-secondary transition-colors duration-200 flex items-center">
+                    Lihat Semua <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="space-y-4">
+                @foreach($latestDudi as $dudi)
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+                            <div>
+                                <h3 class="font-semibold text-dark">{{ $dudi->nama }}</h3>
+                                <p class="text-gray-600 text-sm">{{ $dudi->pimpinan }} - {{ $dudi->jabatan }}</p>
+                            </div>
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                            Kapasitas: {{ $dudi->daya_tampung }}
+                        </span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full space-y-6 px-0">
         <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 animate-fade-in w-full">
             <h2 class="text-xl font-bold text-dark mb-6">
                 Aksi Cepat
             </h2>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-
-                {{-- Tambah Siswa --}}
                 <div class="bg-linear-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 card-hover flex flex-col justify-between">
                     <div class="text-center">
                         <div class="bg-blue-500 p-4 rounded-lg inline-flex mb-4">
@@ -171,14 +159,11 @@
                             Tambah Siswa
                         </h3>
                     </div>
-
                     <a href="{{ route('siswa.create') }}"
                     class="mt-6 text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
                         Buka <i class="fas fa-arrow-right ml-2"></i>
                     </a>
                 </div>
-
-                {{-- Tambah Pembimbing --}}
                 <div class="bg-linear-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 card-hover flex flex-col justify-between">
                     <div class="text-center">
                         <div class="bg-green-500 p-4 rounded-lg inline-flex mb-4">
@@ -188,14 +173,11 @@
                             Tambah Pembimbing
                         </h3>
                     </div>
-
                     <a href="{{ route('pembimbing.create') }}"
                     class="mt-6 text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
                         Buka <i class="fas fa-arrow-right ml-2"></i>
                     </a>
                 </div>
-
-                {{-- DUDI --}}
                 <div class="bg-linear-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200 card-hover flex flex-col justify-between">
                     <div class="text-center">
                         <div class="bg-purple-500 p-4 rounded-lg inline-flex mb-4">
@@ -210,8 +192,6 @@
                         Buka <i class="fas fa-arrow-right ml-2"></i>
                     </a>
                 </div>
-
-                {{-- Buat Surat --}}
                 <div class="bg-linear-to-r from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200 card-hover flex flex-col justify-between">
                     <div class="text-center">
                         <div class="bg-yellow-500 p-4 rounded-lg inline-flex mb-4">
@@ -221,7 +201,6 @@
                             Buat Surat
                         </h3>
                     </div>
-
                     <a href="{{ route('dashboard') }}"
                     class="mt-6 text-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
                         Buka <i class="fas fa-arrow-right ml-2"></i>
@@ -229,10 +208,6 @@
                 </div>
             </div>
         </div>
-
-        </div>
-
-        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
