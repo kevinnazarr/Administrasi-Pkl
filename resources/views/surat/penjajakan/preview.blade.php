@@ -36,7 +36,7 @@
 
     <div class="h-[75vh] bg-gray-100">
         <iframe
-            src="{{ asset('storage/tmp/' . $pdf) }}"
+            src="{{ route('surat.penjajakan.preview.file') }}"
             class="w-full h-full"
             frameborder="0">
         </iframe>
@@ -59,22 +59,29 @@
                 Cetak
             </button>
 
-            <a href="{{ asset('storage/tmp/' . $docx) }}"
-                download
+            <a href="{{ route('surat.penjajakan.download', ['type' => 'docx']) }}"
                 class="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition">
                 <i class="fas fa-file-word"></i>
                 Download DOCX
+            </a>
+
+            <a href="{{ route('surat.penjajakan.download', ['type' => 'pdf']) }}"
+                class="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition">
+                <i class="fas fa-file-pdf"></i>
+                Download PDF
             </a>
         </div>
     </div>
 </div>
 
+
 <script>
 function printSurat() {
-    const pdfUrl = "{{ asset('storage/tmp/' . $pdf) }}";
-    const win = window.open(pdfUrl, '_blank');
+    const url = "{{ route('surat.penjajakan.preview.file') }}";
+    const win = window.open(url, '_blank');
     win.onload = () => win.print();
 }
 </script>
+
 
 @endsection

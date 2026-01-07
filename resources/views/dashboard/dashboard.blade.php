@@ -201,7 +201,7 @@
                             Buat Surat
                         </h3>
                     </div>
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('surat.penjajakan') }}"
                     class="mt-6 text-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
                         Buka <i class="fas fa-arrow-right ml-2"></i>
                     </a>

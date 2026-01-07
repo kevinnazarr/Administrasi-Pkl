@@ -248,9 +248,9 @@
                             </div>
                         </div>
                         <span class="text-xs font-medium px-2 py-1 rounded-full
-                            @if($percentage >= 100) bg-red-100 text-red-800
-                            @elseif($percentage >= 80) bg-yellow-100 text-yellow-800
-                            @else bg-green-100 text-green-800
+                            @if($percentage >= 100)
+                            @elseif($percentage >= 80) bg-yellow-100
+                            @else text-green-800
                             @endif">
                             {{ number_format($percentage, 1) }}%
                         </span>

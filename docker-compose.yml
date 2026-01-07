@@ -1,32 +1,20 @@
 services:
   libreoffice:
-    image: linuxserver/libreoffice:latest
+    image: linuxserver/libreoffice
     container_name: libreoffice
-    restart: unless-stopped
-
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Jakarta
-
     volumes:
-      # Folder tmp Laravel (DOCX & PDF hasil convert)
-      - ./storage/app/public/tmp:/tmp
-
+      - ./storage/app/tmp:/data
     command: >
       bash -c "
       libreoffice
       --headless
       --nologo
       --nofirststartwizard
-      --invisible
       --convert-to pdf
-      --outdir /tmp
+      --outdir /data
       "
-
-    networks:
-      - administrasi-pkl
-
-networks:
-  administrasi-pkl:
-    driver: bridge
+    restart: unless-stopped

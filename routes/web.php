@@ -67,5 +67,17 @@ Route::prefix('surat')->group(function () {
     Route::get('/penjajakan', [SuratController::class, 'penjajakan'])->name('surat.penjajakan');
     Route::post('/penjajakan/preview', [SuratController::class, 'penjajakanPreview'])->name('surat.penjajakan.preview');
     Route::get('/penjajakan/preview-page', [SuratController::class, 'previewPage'])->name('surat.penjajakan.preview.page');
-    Route::get('/penjajakan/download', [SuratController::class, 'download'])->name('surat.penjajakan.download');
+
+    Route::get('/penjajakan/preview-file', [SuratController::class, 'previewFile'])
+        ->name('surat.penjajakan.preview.file');
+
+    Route::get('/penjajakan/download', [SuratController::class, 'download'])
+        ->name('surat.penjajakan.download');
 });
+
+Route::get('/surat/file/{name}', function ($name) {
+    $path = storage_path("app/tmp/{$name}");
+    abort_unless(file_exists($path), 404);
+    return response()->file($path);
+});
+

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Symfony\Component\Process\Process;
+use PhpOffice\PhpWord\Element\TextRun;
+use Carbon\Carbon;
 
 class SuratController extends Controller
 {
@@ -24,25 +26,43 @@ class SuratController extends Controller
         ]);
     }
 
+    public function __construct()
+    {
+        Carbon::setLocale('id');
+    }
+    private function indoDate($date)
+    {
+        return \Carbon\Carbon::parse($date)->translatedFormat('j F Y');
+    }
+
+    private function rangeTanggal($mulai, $selesai)
+    {
+        if (!$mulai || !$selesai) return '-';
+
+        $m = \Carbon\Carbon::parse($mulai);
+        $s = \Carbon\Carbon::parse($selesai);
+
+        if ($m->month === $s->month && $m->year === $s->year) {
+            return $m->day . ' s.d ' . $s->translatedFormat('j F Y');
+        }
+
+        return $m->translatedFormat('j F Y') . ' s.d ' . $s->translatedFormat('j F Y');
+    }
+
     public function penjajakanPreview(Request $request)
     {
         $data = $request->validate([
             'id_dudi'          => 'required|exists:dudi,id_dudi',
             'id_jurusan'       => 'required|exists:jurusan,id_jurusan',
-
             'nomor_surat'      => 'required',
             'tanggal_surat'    => 'required|date',
-
             'tanggal_mulai'    => 'required|date',
             'tanggal_selesai'  => 'required|date',
-
             'lama_pkl'         => 'required',
             'tingkat'          => 'required',
             'alamat_kecamatan' => 'required',
-
             'm_pembekalan'     => 'nullable|date',
             's_pembekalan'     => 'nullable|date',
-
             'm_pengujian'      => 'nullable|date',
             's_pengujian'      => 'nullable|date',
         ]);
@@ -50,52 +70,45 @@ class SuratController extends Controller
         $dudi    = Dudi::findOrFail($data['id_dudi']);
         $jurusan = Jurusan::findOrFail($data['id_jurusan']);
 
-        $fmt = function ($value) {
-            return $value ? date('d F Y', strtotime($value)) : '-';
-        };
+        $tmpDir = storage_path('app/tmp');
+        if (!is_dir($tmpDir)) mkdir($tmpDir, 0755, true);
 
-        $uuid   = Str::uuid();
-        $tmpDir = storage_path('app/public/tmp');
+        $uuid = Str::uuid();
+        $docx = "surat-$uuid.docx";
+        $pdf  = "surat-$uuid.pdf";
 
-        if (!is_dir($tmpDir)) {
-            mkdir($tmpDir, 0755, true);
-        }
+        $docxPath = "$tmpDir/$docx";
+        $pdfPath  = "$tmpDir/$pdf";
 
-        $docxName = "surat-{$uuid}.docx";
-        $pdfName  = "surat-{$uuid}.pdf";
-
-        $docxPath = "{$tmpDir}/{$docxName}";
-        $pdfPath  = "{$tmpDir}/{$pdfName}";
-
-        $template = new TemplateProcessor(
-            storage_path('app/templates/surat-penjajakan.docx')
-        );
-
-        $template->setValues([
+        $tpl = new TemplateProcessor(storage_path('app/templates/surat-penjajakan.docx'));
+        $tpl->setValues([
             'nomor_surat'      => $data['nomor_surat'],
-            'tanggal_surat'    => $fmt($data['tanggal_surat']),
-
+            'tanggal_surat'    => $this->indoDate($data['tanggal_surat']),
             'nama_dudi'        => $dudi->nama,
             'alamat_jalan'     => $dudi->alamat,
             'alamat_kecamatan' => $data['alamat_kecamatan'],
-
-            'lama_pkl'         => $data['lama_pkl'],
-            'tingkat'          => $data['tingkat'],
             'jurusan'          => $jurusan->jurusan,
-
-            'tanggal_mulai'    => $fmt($data['tanggal_mulai']),
-            'tanggal_selesai'  => $fmt($data['tanggal_selesai']),
-
-            'm_pembekalan'     => $fmt($data['m_pembekalan'] ?? null),
-            's_pembekalan'     => $fmt($data['s_pembekalan'] ?? null),
-
-            'm_pengujian'      => $fmt($data['m_pengujian'] ?? null),
-            's_pengujian'      => $fmt($data['s_pengujian'] ?? null),
+            'tingkat'          => $data['tingkat'],
+            'lama_pkl'         => $data['lama_pkl'],
+            'pembekalan'       => $this->rangeTanggal($data['m_pembekalan'], $data['s_pembekalan']),
+            'pengujian'        => $this->rangeTanggal($data['m_pengujian'], $data['s_pengujian']),
         ]);
 
-        $template->saveAs($docxPath);
+        $pelaksanaan = new TextRun();
+        $pelaksanaan->addText(
+            $this->rangeTanggal($data['tanggal_mulai'], $data['tanggal_selesai']),
+            [
+                'bold' => true,
+                'name' => 'Arial',
+                'size' => 12
+            ]
+        );
 
-        copy($docxPath, "/tmp/{$docxName}");
+        $tpl->setComplexValue('pelaksanaan', $pelaksanaan);
+
+        $tpl->saveAs($docxPath);
+
+        copy($docxPath, "$tmpDir/$docx");
 
         $process = new Process([
             'docker',
@@ -106,21 +119,17 @@ class SuratController extends Controller
             '--convert-to',
             'pdf',
             '--outdir',
-            '/tmp',
-            "/tmp/{$docxName}"
+            '/data',
+            "/data/$docx"
         ]);
-
+        $process->setTimeout(60);
         $process->run();
 
-        if (!$process->isSuccessful()) {
-            abort(500, 'Gagal convert DOCX ke PDF via LibreOffice Docker');
-        }
-
-        copy("/tmp/{$pdfName}", $pdfPath);
+        abort_unless($process->isSuccessful(), 500, $process->getErrorOutput());
 
         session([
-            'surat_docx' => $docxName,
-            'surat_pdf'  => $pdfName,
+            'surat_docx' => $docx,
+            'surat_pdf'  => $pdf,
         ]);
 
         return redirect()->route('surat.penjajakan.preview.page');
@@ -139,14 +148,27 @@ class SuratController extends Controller
     public function download(Request $request)
     {
         $type = $request->query('type');
-
         abort_unless(in_array($type, ['pdf', 'docx']), 404);
 
-        $filename = session("surat_{$type}");
-        $path     = storage_path("app/public/tmp/{$filename}");
+        $file = session("surat_{$type}");
+        $path = storage_path("app/tmp/{$file}");
 
         abort_unless(file_exists($path), 404);
 
         return response()->download($path);
+    }
+
+    public function previewFile()
+    {
+        $file = session('surat_pdf');
+        abort_unless($file, 404);
+
+        $path = storage_path("app/tmp/$file");
+        abort_unless(file_exists($path), 404);
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline'
+        ]);
     }
 }

@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 class DocxToPdfService
 {
-    public function convert(string $docxPath, string $outputDir): string
+    public function convert(string $docxPath): string
     {
-        $pdfName = pathinfo($docxPath, PATHINFO_FILENAME) . '.pdf';
+        if (!file_exists($docxPath)) {
+            throw new \Exception("DOCX tidak ditemukan: {$docxPath}");
+        }
+
+        $containerDocx = '/tmp/' . basename($docxPath);
 
         $process = new Process([
             'docker',
@@ -20,19 +23,17 @@ class DocxToPdfService
             '--convert-to',
             'pdf',
             '--outdir',
-            '/data',
-            '/data/' . basename($docxPath),
+            '/tmp',
+            $containerDocx
         ]);
 
-        $process->setTimeout(60);
+        $process->setTimeout(120);
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(
-                'Gagal convert PDF: ' . $process->getErrorOutput()
-            );
+            throw new \Exception($process->getErrorOutput());
         }
 
-        return $pdfName;
+        return str_replace('.docx', '.pdf', basename($docxPath));
     }
 }

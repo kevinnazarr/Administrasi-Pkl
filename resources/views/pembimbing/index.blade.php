@@ -168,17 +168,11 @@
                                     Edit
                                 </a>
 
-                                <form action="{{ route('pembimbing.destroy', $item->id_pembimbing) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus pembimbing ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs transition">
-                                        <i class="fas fa-trash text-xs"></i>
-                                        Hapus
-                                    </button>
-                                </form>
+                                <button type="button" onclick="showDeleteConfirmation('{{ $item->id_pembimbing }}', '{{ $item->nama }}')"
+                                    class="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs transition">
+                                    <i class="fas fa-trash text-xs"></i>
+                                    Hapus
+                                </button>
                                 @endif
                             </div>
                         </td>
@@ -275,6 +269,12 @@
                         <i class="fas fa-edit"></i>
                         Edit
                     </a>
+
+                    <button type="button" onclick="showDeleteConfirmation('{{ $item->id_pembimbing }}', '{{ $item->nama }}')"
+                        class="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition">
+                        <i class="fas fa-trash"></i>
+                        Hapus
+                    </button>
                     @endif
                 </div>
             </div>
@@ -303,5 +303,218 @@
             </div>
         @endif
     </div>
+
+<div id="deleteConfirmationModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 md:p-8 animate-fade-in">
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <div class="w-16 h-16 relative">
+                    <div class="absolute inset-0 rounded-full border-4 border-red-200"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-red-500 border-t-transparent animate-spin"></div>
+                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl absolute inset-0 flex items-center justify-center"></i>
+                </div>
+
+                <div class="text-center space-y-2">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        Hapus Data Pembimbing
+                    </h3>
+                    <p class="text-gray-600" id="deletePembimbingName">
+                        Sedang memuat...
+                    </p>
+                    <p class="text-sm text-gray-500 mt-4">
+                        Data yang dihapus tidak dapat dikembalikan
+                    </p>
+                </div>
+
+                <div class="flex gap-3 w-full mt-4">
+                    <button type="button" onclick="hideDeleteModal()"
+                        class="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-xl font-medium transition">
+                        <i class="fas fa-times"></i>
+                        Batal
+                    </button>
+
+                    <form id="deleteForm" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-medium transition">
+                            <i class="fas fa-trash"></i>
+                            Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingNotification" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 md:p-8 animate-fade-in">
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <div class="w-16 h-16 relative">
+                    <div class="absolute inset-0 rounded-full border-4 border-blue-200"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                    <i class="fas fa-trash text-blue-500 text-2xl absolute inset-0 flex items-center justify-center"></i>
+                </div>
+
+                <div class="text-center space-y-2">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-cog animate-spin mr-2"></i>
+                        Menghapus Data
+                    </h3>
+                    <p class="text-gray-600">
+                        Sedang menghapus data pembimbing...
+                    </p>
+                    <p class="text-sm text-gray-500 mt-4">
+                        Harap tunggu sebentar
+                    </p>
+                </div>
+
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div class="bg-blue-500 h-2.5 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+}
+</style>
+
+<script>
+function showDeleteConfirmation(pembimbingId, pembimbingName) {
+    const modal = document.getElementById('deleteConfirmationModal');
+    const pembimbingNameElement = document.getElementById('deletePembimbingName');
+    const deleteForm = document.getElementById('deleteForm');
+
+    pembimbingNameElement.textContent = `Apakah Anda yakin ingin menghapus data pembimbing "${pembimbingName}"?`;
+    deleteForm.action = `/pembimbing/${pembimbingId}`;
+
+    modal.classList.remove('hidden');
+}
+
+function hideDeleteModal() {
+    const modal = document.getElementById('deleteConfirmationModal');
+    modal.classList.add('hidden');
+}
+
+document.getElementById('deleteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const modal = document.getElementById('deleteConfirmationModal');
+    const loadingModal = document.getElementById('loadingNotification');
+
+    modal.classList.add('hidden');
+    loadingModal.classList.remove('hidden');
+
+    setTimeout(() => {
+        form.submit();
+    }, 500);
+});
+
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('deleteConfirmationModal');
+    const loadingModal = document.getElementById('loadingNotification');
+
+    if (e.target === modal) {
+        hideDeleteModal();
+    }
+
+    if (e.target === loadingModal) {
+        loadingModal.classList.add('hidden');
+    }
+});
+
+function showToast(message, type = 'info') {
+    const existingToast = document.querySelector('.custom-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const bgColor = type === 'success' ? 'bg-green-500' :
+                    type === 'error' ? 'bg-red-500' :
+                    type === 'warning' ? 'bg-yellow-500' :
+                    'bg-blue-500';
+
+    const icon = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' :
+                type === 'warning' ? 'fa-exclamation-triangle' :
+                'fa-info-circle';
+
+    const toast = document.createElement('div');
+    toast.className = 'custom-toast fixed top-4 right-4 z-50 max-w-sm animate-fade-in';
+    toast.innerHTML = `
+        <div class="${bgColor} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+            <i class="fas ${icon} text-xl"></i>
+            <div>
+                <p class="font-medium">${message}</p>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 5000);
+}
+</script>
 
 @endsection

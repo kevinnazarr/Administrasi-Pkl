@@ -9,10 +9,14 @@ class CleanupSuratOnLogout
 {
     public function handle(Logout $event): void
     {
-        $path = storage_path('app/tmp');
+        $tmpPath = storage_path('app/tmp');
 
-        if (File::exists($path)) {
-            File::deleteDirectory($path);
+        if (!is_dir($tmpPath)) return;
+
+        $files = File::files($tmpPath);
+
+        foreach ($files as $file) {
+            File::delete($file);
         }
     }
 }
