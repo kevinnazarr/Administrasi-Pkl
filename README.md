@@ -1,145 +1,153 @@
-
-## 🚀 ADMINISTRASI PKL: Aplikasi Pengelolaan Praktik Kerja Lapangan
-
-<div align="center">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo">
-    <p>Aplikasi administrasi Praktik Kerja Lapangan (PKL) berbasis web modern.</p>
-</div>
+# Administrasi PKL — Platform Administrasi Praktik Kerja Lapangan
 
 <div align="center">
+    <img src="/images/projects/Administrasi-Pkl/Administrasi-PKL.jpeg" width="700" alt="Administrasi PKL Preview">
+</div>
 
-| Teknologi Inti | Versi | Status |
-| :--- | :--- | :--- |
-| **Laravel** | `12.x` | [![Laravel](https://img.shields.io/badge/Laravel-12.x-red)](https://laravel.com) |
-| **Database** | `PostgreSQL` | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue)](https://www.postgresql.org) |
-| **Assets Bundler** | `Vite` | [![Vite](https://img.shields.io/badge/Vite-Bundler-purple)](https://vitejs.dev) |
-| **Lisensi** | `MIT` | [![License](https://img.shields.io/github/license/Vinnzz-coy/administrator-pkl)](LICENSE) |
+<br>
+
+<div align="center">
+
+| Teknologi | Versi |
+| :--- | :--- |
+| **Laravel** | `12.x` |
+| **PHP** | `8.2` |
+| **Database** | `PostgreSQL` |
+| **Frontend** | `Tailwind CSS v4` |
+| **Container** | `Docker` |
+| **Dokumen** | `PhpWord` + `LibreOffice` (headless) |
 
 </div>
 
----
+Sebuah sistem manajemen internal untuk mendigitalisasi dan menyederhanakan alur kerja administrasi **Praktik Kerja Lapangan (PKL)** di tingkat SMK. Dikembangkan sebagai solusi nyata — bukan simulasi — untuk memodernisasi infrastruktur sekolah, menyederhanakan pelacakan data siswa, dan mengotomatisasi pembuatan dokumen resmi.
 
-### ✨ Fitur Utama (TODO: Sesuaikan dengan Fitur Aplikasi Anda)
-
-Aplikasi ini dirancang untuk mempermudah administrasi dan pengelolaan data PKL, termasuk:
-
-* **Manajemen Data Siswa/Mahasiswa:** Pencatatan dan pengelolaan data peserta PKL.
-* **Pengelolaan Tempat PKL:** Data perusahaan/instansi yang menjadi lokasi PKL.
-* **Sistem Penilaian:** Pencatatan dan perhitungan nilai PKL.
-* **Laporan & Rekapitulasi:** Generasi laporan administrasi secara otomatis.
+> 🏗️ **Dikembangkan selama program PKL** (Desember 2025 - Maret 2026) dan saat ini digunakan sebagai sistem produksi utama.
 
 ---
 
-### 🛠️ Persyaratan Sistem
+## ✨ Fitur Utama
 
-Pastikan sistem Anda memenuhi persyaratan berikut sebelum memulai instalasi:
-
-* **PHP:** Versi 8.2 atau lebih tinggi.
-* **Composer:** Terinstal di sistem Anda.
-* **Node.js & NPM:** Terinstal untuk menjalankan Vite.
-* **PostgreSQL:** Server database berjalan dan dapat diakses.
+| Fitur | Deskripsi |
+| :--- | :--- |
+| **RBAC 3 Tingkat** | Role `super_admin`, `admin_jurusan`, dan `siswa` — masing-masing dengan middleware ketat dan dashboard khusus |
+| **Autentikasi Ganda** | Login via username atau NIS (Nomor Induk Siswa) |
+| **Manajemen Data** | CRUD lengkap untuk siswa, jurusan, pembimbing, dan logistik transportasi |
+| **Monitoring DU/DI** | Pelacakan mitra industri dengan kalkulasi sisa kuota penempatan secara real-time |
+| **Otomatisasi Dokumen** | Generate surat resmi dari template DOCX → dikonversi ke PDF via headless LibreOffice (Docker) |
+| **Pemeliharaan Storage** | Pembersihan file sementara otomatis saat logout |
 
 ---
 
-### 💻 Panduan Instalasi dan Konfigurasi Project
+## 📋 Persyaratan Sistem
 
-Ikuti langkah-langkah di bawah ini untuk menginstal dan menjalankan aplikasi secara lokal.
+- **PHP** 8.2+
+- **Composer**
+- **Node.js** & **NPM**
+- **PostgreSQL**
+- **Docker** (untuk pipeline PDF)
 
-#### 1. Menggandakan Repositori (Clone)
+---
 
-Buka Terminal atau Command Prompt, lalu jalankan perintah berikut:
+## 🔧 Instalasi
+
+### 1. Clone Repositori
 
 ```bash
-git clone [https://github.com/Vinnzz-coy/administrator-pkl.git](https://github.com/Vinnzz-coy/administrator-pkl.git)
+git clone https://github.com/Vinnzz-coy/administrator-pkl.git
 cd administrator-pkl
-````
+```
 
-#### 2\. Instalasi Dependensi
-
-Instal dependensi *backend* (PHP/Laravel) menggunakan **Composer**:
+### 2. Install Dependensi
 
 ```bash
 composer install
-```
-
-Instal dependensi *frontend* (JavaScript/Vite) menggunakan **NPM/Yarn**:
-
-```bash
 npm install
-# atau
-# yarn install
 ```
 
-#### 3\. Konfigurasi Lingkungan (`.env`)
-
-Salin file lingkungan contoh (`.env.example`) untuk membuat file konfigurasi (`.env`):
+### 3. Konfigurasi Environment
 
 ```bash
-# Untuk Linux/macOS
 cp .env.example .env
-
-# Untuk Windows
-# copy .env.example .env
+php artisan key:generate
 ```
 
-#### 4\. Penyesuaian Database
-
-Buka file `.env` dan sesuaikan pengaturan koneksi database PostgreSQL Anda:
+Sesuaikan konfigurasi database di `.env`:
 
 ```dotenv
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=administrasi_pkl # Ganti sesuai nama database Anda
-DB_USERNAME=postgres         # Ganti sesuai username database Anda
-DB_PASSWORD=YOUR_PASSWORD    # Ganti sesuai password database Anda
+DB_DATABASE=administrasi_pkl
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
 ```
 
-#### 5\. Generate Application Key
-
-Hasilkan kunci enkripsi Laravel untuk keamanan:
-
-```bash
-php artisan key:generate
-```
-
-#### 6\. Migrasi Database dan Seeding (Opsional)
-
-Jalankan migrasi untuk membuat tabel database dan *seeder* (jika ada) untuk mengisi data awal:
+### 4. Migrasi & Seeding
 
 ```bash
 php artisan migrate
-
-# Opsional: Jika Anda memiliki seeder data awal
-# php artisan db:seed
+php artisan db:seed
 ```
 
-#### 7\. Menjalankan Aplikasi
+### 5. Jalankan Aplikasi
 
-Aplikasi Laravel memerlukan dua proses yang berjalan bersamaan: server backend (PHP) dan bundler frontend (Vite).
+Terminal 1 — Backend:
 
-  * **Jalankan Server Laravel (Backend)**
-    Buka Terminal/CMD **pertama** dan jalankan:
-
-    ```bash
-    php artisan serve
-    ```
-
-    Aplikasi akan tersedia di `http://127.0.0.1:8000`.
-
-  * **Jalankan Vite (Frontend Assets)**
-    Buka Terminal/CMD **kedua** dan jalankan:
-
-    ```bash
-    npm run dev
-    # atau
-    # yarn dev
-    ```
-
-    Ini akan mengompilasi CSS dan JS agar fitur frontend seperti Livewire/Vue/React (jika digunakan) dapat berfungsi.
-
-
+```bash
+php artisan serve
 ```
 
-Apakah ada bagian lain dari dokumentasi proyek Anda yang ingin Anda perjelas atau perbaiki?
+Terminal 2 — Frontend (Vite):
+
+```bash
+npm run dev
 ```
+
+Aplikasi tersedia di `http://127.0.0.1:8000`.
+
+### 6. (Opsional) Pipeline PDF
+
+Untuk generate dokumen PDF, jalankan container LibreOffice:
+
+```bash
+docker compose up -d libreoffice
+```
+
+---
+
+## 🔐 Akun Default (Seeding)
+
+Setelah `db:seed`, tersedia akun admin per jurusan:
+
+| Jurusan | Username | Password |
+| :--- | :--- | :--- |
+| Rekayasa Perangkat Lunak | `admin_rpl` | `rpl@2025` |
+| Teknik Komputer Jaringan | `admin_tkj` | `tkj@2025` |
+| Desain Komunikasi Visual | `admin_dkv` | `dkv@2025` |
+| Akuntansi | `admin_akl` | `akl@2025` |
+| Manajemen Perkantoran Layanan Bisnis | `admin_mplb` | `mplb@2025` |
+| Pemasaran | `admin_pemasaran` | `pemasaran@2025` |
+| Kuliner | `admin_kuliner` | `kuliner@2025` |
+| Usaha Layanan Wisata | `admin_ulw` | `ulw@2025` |
+
+> ⚠️ Ganti password default setelah login pertama.
+
+---
+
+## 🐳 Docker
+
+Gunakan `docker compose` untuk menjalankan dependency:
+
+```bash
+# LibreOffice headless (konversi DOCX → PDF)
+docker compose up -d libreoffice
+
+# Jika menggunakan PostgreSQL via Docker
+docker compose up -d postgres
+```
+
+---
+
+## 📄 Lisensi
+
+[MIT](LICENSE)
